@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Catálogo de Filmes</string>
+    <string name="toolbar_title">Vídeos/ - %1$d files</string>
+    <string name="movie_title">%1$s. (%2$s)</string>
+    <string name="search">Pesquisar</string>
+    <string name="unavailable_resource_message">"Recurso indisponível no momento."</string>
+    <string name="genre_and_country">%1$s. %2$s.</string>
+    <string name="view_image">View Image</string>
 </resources>

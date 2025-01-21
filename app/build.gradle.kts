@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -7,17 +9,27 @@ plugins {
 }
 
 android {
-    namespace = "com.example.catalogodefilmes"
+    namespace = "com.lohanna.catalogodefilmes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.catalogodefilmes"
+        applicationId = "com.lohanna.catalogodefilmes"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val apiKey = project.rootDir.resolve("local.properties").let { file ->
+            if (file.exists()) {
+                Properties().apply { load(file.inputStream()) }.getProperty("API_KEY") ?: ""
+            } else {
+                ""
+            }
+        }
+        buildConfigField("String", "API_KEY", apiKey)
+        buildConfigField("String", "BASE_URL", "\"https://www.omdbapi.com/\"")
     }
 
     buildTypes {
@@ -37,6 +49,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 }
@@ -59,6 +72,10 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:.0.0-alpha.7")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.7")
 
     // Paging
     implementation(libs.androidx.paging.runtime)
