@@ -1,10 +1,8 @@
 package com.lohanna.catalogodefilmes.data.movies.repository
 
 import android.util.Log
-import com.google.gson.Gson
 import com.lohanna.catalogodefilmes.BuildConfig
 import com.lohanna.catalogodefilmes.data.common.model.DataState
-import com.lohanna.catalogodefilmes.data.movies.model.ErrorResponse
 import com.lohanna.catalogodefilmes.data.movies.model.MovieDetailsDataModel
 import com.lohanna.catalogodefilmes.data.movies.model.MoviesDataModel
 import com.lohanna.catalogodefilmes.data.movies.remote.MoviesRemoteDataSource
@@ -23,13 +21,17 @@ class MoviesRepositoryImpl @Inject constructor(private val remote: MoviesRemoteD
                 year = query.year
             )
 
-            Log.i("REPOSITORY", response.body()?.toString() ?: "")
+            response.body()?.let {
+                if (it.response == "True") {
+                    Log.i("SUCCESS:", response.body()?.toString() ?: "")
+                    DataState.Success(it)
+                } else {
+                    getError(it.error)
+                }
+            } ?: getError()
 
-            response.body()?.let { DataState.Success(it) }
-                ?: getError(response.errorBody()?.string())
         } catch (e: Throwable) {
-            Log.i("REPOSITORY", genericErrorMessage)
-            DataState.Error(Throwable(genericErrorMessage))
+            getError()
         }
     }
 
@@ -41,21 +43,24 @@ class MoviesRepositoryImpl @Inject constructor(private val remote: MoviesRemoteD
                 imdb = query.imdb
             )
 
-            Log.i("REPOSITORY", response.body()?.toString() ?: "")
+            response.body()?.let {
+                if (it.response == "True") {
+                    Log.i("SUCCESS:", response.body()?.toString() ?: "")
+                    DataState.Success(it)
+                } else {
+                    getError(it.error)
+                }
+            } ?: getError()
 
-            response.body()?.let { DataState.Success(it) }
-                ?: getError(response.errorBody()?.string())
         } catch (e: Throwable) {
-            Log.i("REPOSITORY", genericErrorMessage)
-            DataState.Error(Throwable(genericErrorMessage))
+            getError()
         }
     }
 
-    private fun getError(data: String?): DataState.Error {
-        val response = Gson().fromJson<Any>(data, ErrorResponse::class.java) as? ErrorResponse
-        Log.i("REPOSITORY", response?.error ?: genericErrorMessage)
-        return DataState.Error(Throwable(response?.error ?: genericErrorMessage))
+    private fun getError(data: String? = null): DataState.Error {
+        Log.i("ERROR:", data ?: genericErrorMessage)
+        return DataState.Error(Throwable(data ?: genericErrorMessage))
     }
 
-    private val genericErrorMessage = "Ocorreu um erro."
+    private val genericErrorMessage = "An error occurred."
 }

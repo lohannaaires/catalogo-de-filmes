@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorPrimaryDark">
 
     <ImageView
         android:id="@+id/ivIconNotFound"
@@ -22,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="32dp"
         android:textAlignment="center"
-        tools:text="Infelizmente não encontramos o resultado."
+        tools:text="An error ocurred."
+        android:textColor="@color/colorDetail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivIconNotFound" />

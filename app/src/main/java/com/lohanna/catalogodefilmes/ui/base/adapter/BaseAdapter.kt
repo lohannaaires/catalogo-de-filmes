@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lohanna.catalogodefilmes.ui.base.model.ItemModel
 import com.lohanna.catalogodefilmes.ui.base.viewHolder.BaseViewHolder
 
-abstract class BaseAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     protected var list: MutableList<ItemModel> = mutableListOf()
     var listener: ItemClickListener? = null
 

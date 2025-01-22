@@ -12,8 +12,7 @@ interface MoviesRemoteDataSource {
         @Query("apikey") apiKey: String,
         @Query("s") searchQuery: String?,
         @Query("type") type: String?,
-        @Query("y") year: Int?,
-
+        @Query("y") year: Int?
     ): Response<MoviesDataModel.Response>
 
     @GET(".")

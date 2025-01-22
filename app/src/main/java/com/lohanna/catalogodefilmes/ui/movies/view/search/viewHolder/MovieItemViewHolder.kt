@@ -9,15 +9,16 @@ import com.squareup.picasso.Picasso
 
 class MovieItemViewHolder(
     private val binding: MovieItemBinding
-): BaseViewHolder<MoviesUIModel.MovieItem>(binding.root) {
+) : BaseViewHolder<MoviesUIModel.MovieItem>(binding.root) {
 
     override fun bind(item: MoviesUIModel.MovieItem, listener: ItemClickListener?) {
         item.movie.apply {
-            binding.tvMovieTitle.text = binding.root.resources.getString(R.string.movie_title, this.title, this.year)
+            binding.tvMovieTitle.text =
+                binding.root.resources.getString(R.string.movie_title, this.title, this.year)
             binding.tvMovieType.text = this.type
         }
 
-         when(item.movie.type) {
+        when (item.movie.type) {
             "movie" -> binding.ivType.setImageResource(R.drawable.ic_movie)
             "series" -> binding.ivType.setImageResource(R.drawable.ic_folder)
         }

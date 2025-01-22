@@ -10,7 +10,7 @@ object UIModel {
         var end: Int = 0,
         var top: Int = 0,
         var bottom: Int = 0
-    ): ItemModel {
+    ) : ItemModel {
         fun getDP(value: Int): Int = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             value.toFloat(),

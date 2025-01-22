@@ -12,7 +12,8 @@ object MoviesDataModel {
     data class Response(
         @SerializedName("Search") val searchList: List<Movie>?,
         @SerializedName("totalResults") val total: String?,
-        @SerializedName("Response") val response: String
+        @SerializedName("Response") val response: String,
+        @SerializedName("Error") val error: String?
     )
 
     data class Movie(

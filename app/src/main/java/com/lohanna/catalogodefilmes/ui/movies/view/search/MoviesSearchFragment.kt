@@ -22,9 +22,8 @@ import com.lohanna.catalogodefilmes.databinding.AlertDialogMovieDetailsBinding
 import com.lohanna.catalogodefilmes.databinding.FragmentSearchBaseLayoutBinding
 import com.lohanna.catalogodefilmes.ui.base.adapter.ItemClickListener
 import com.lohanna.catalogodefilmes.ui.base.model.ItemModel
-import com.lohanna.catalogodefilmes.ui.common.util.ViewUtils.dismiss
 import com.lohanna.catalogodefilmes.ui.common.util.ViewUtils.removeLinksUnderline
-import com.lohanna.catalogodefilmes.ui.common.util.ViewUtils.show
+import com.lohanna.catalogodefilmes.ui.component.Loading
 import com.lohanna.catalogodefilmes.ui.movies.view.search.uiModel.MoviesUIModel
 import com.lohanna.catalogodefilmes.ui.movies.viewModel.MoviesSearchViewModel
 import com.lohanna.catalogodefilmes.ui.movies.viewModel.MoviesSearchViewModelImp
@@ -38,6 +37,8 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
 
     private val layoutViewModel: MovieSearchLayoutViewModel by viewModels<MovieSearchLayoutViewModelImp>()
     private val dataViewModel: MoviesSearchViewModel by viewModels<MoviesSearchViewModelImp>()
+
+    private var lastDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,18 +55,16 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
     }
 
     private fun setUI() {
+        getData()
         setMaterialToolbarTitle()
         setAdapter()
         setObserver()
         searchView()
-        getData()
     }
 
     private fun getData() {
-        if (dataViewModel.movies.value == null) {
-            dataViewModel.getMoviesByTerm("Duna")
-            binding.pbLoading.show()
-        }
+        Loading.show(requireContext())
+        dataViewModel.getMoviesByTerm("Duna")
     }
 
     private fun setMaterialToolbarTitle() {
@@ -74,7 +73,6 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
     }
 
     private fun setAdapter() {
-        // A fazer
         adapter = MovieSearchAdapter()
         adapter.listener = this
         binding.rvContainer.layoutManager =
@@ -92,26 +90,23 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         }
 
         dataViewModel.movies.observe(viewLifecycleOwner) {
-            binding.pbLoading.dismiss()
-            setMaterialToolbarTitle()
-            layoutViewModel.createLayout(it)
-        }
-
-        dataViewModel.movieDetails.observe(viewLifecycleOwner) {
-            binding.pbLoading.dismiss()
+            Loading.dismiss()
             it?.let {
-                showDetails()
+                setMaterialToolbarTitle()
+                layoutViewModel.createLayout(it)
             }
         }
 
+        dataViewModel.movieDetails.observe(viewLifecycleOwner) {
+            Loading.dismiss()
+            it?.let { showDetails() }
+        }
+
         dataViewModel.error.observe(viewLifecycleOwner) {
-            binding.pbLoading.dismiss()
-            if (it) {
+            Loading.dismiss()
+            it?.let {
                 adapter.update(
-                    listOf(
-                        MoviesUIModel.EmptyList(textMessage = R.string.unavailable_resource_message),
-                        MoviesUIModel.ReloadButton()
-                    )
+                    listOf(MoviesUIModel.ErrorItem(textMessage = it))
                 )
             }
         }
@@ -137,13 +132,8 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
     override fun onItemClicked(item: ItemModel) {
         when (item) {
             is MoviesUIModel.MovieItem -> {
+                Loading.show(requireContext())
                 dataViewModel.getMovieDetails(item.movie.imdbID)
-                binding.pbLoading.show()
-            }
-
-            is MoviesUIModel.ReloadButton -> {
-                dataViewModel.getMoviesByTerm("Duna")
-                binding.pbLoading.show()
             }
         }
     }
@@ -169,7 +159,6 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         )
 
         dialogBinding.apply {
-
             Picasso.get()
                 .load(data?.poster)
                 .placeholder(R.drawable.ic_placeholder)
@@ -201,11 +190,16 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         }
 
         builder.setPositiveButton("OK") { _, _ -> }
+        builder.setCancelable(false)
+
+        lastDialog?.dismiss()
 
         val dialog = builder.create()
         dialog.show()
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE)
             .setTextColor(ContextCompat.getColor(requireContext(), R.color.yellow_primary))
+
+        lastDialog = dialog
     }
 }

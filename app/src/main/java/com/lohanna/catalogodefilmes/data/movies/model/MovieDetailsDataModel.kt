@@ -32,7 +32,8 @@ object MovieDetailsDataModel {
         @SerializedName("BoxOffice") var boxOffice: String? = null,
         @SerializedName("Production") var production: String? = null,
         @SerializedName("Website") var website: String? = null,
-        @SerializedName("Response") var response: String? = null
+        @SerializedName("Response") var response: String? = null,
+        @SerializedName("Error") val error: String?
     )
 
     data class Ratings(

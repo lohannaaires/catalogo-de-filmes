@@ -21,12 +21,13 @@ class MoviesSearchViewModelImp @Inject constructor(private val repository: Movie
     override val movies: LiveData<List<MoviesDataModel.Movie>?>
         get() = _movies
 
-    private val _movieDetails = MutableLiveData<MovieDetailsDataModel.Response?>().apply { value = null }
+    private val _movieDetails =
+        MutableLiveData<MovieDetailsDataModel.Response?>().apply { value = null }
     override val movieDetails: LiveData<MovieDetailsDataModel.Response?>
         get() = _movieDetails
 
-    private val _error = MutableLiveData<Boolean>()
-    override val error: LiveData<Boolean>
+    private val _error = MutableLiveData<String?>().apply { value = null }
+    override val error: LiveData<String?>
         get() = _error
 
     override fun getMoviesByTerm(term: String) {
@@ -43,7 +44,7 @@ class MoviesSearchViewModelImp @Inject constructor(private val repository: Movie
                 }
 
                 is DataState.Error -> {
-                    _error.postValue(true)
+                    _error.postValue(response.exception.message)
                 }
             }
         }
@@ -61,7 +62,7 @@ class MoviesSearchViewModelImp @Inject constructor(private val repository: Movie
                 }
 
                 is DataState.Error -> {
-                    _error.postValue(true)
+                    _error.postValue(response.exception.message)
                 }
             }
         }

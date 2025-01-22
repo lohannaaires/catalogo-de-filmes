@@ -6,5 +6,5 @@ import com.lohanna.catalogodefilmes.ui.base.model.ItemModel
 
 interface MovieSearchLayoutViewModel {
     val layout: LiveData<List<ItemModel>>
-    fun createLayout(data: List<MoviesDataModel.Movie>?)
+    fun createLayout(data: List<MoviesDataModel.Movie>)
 }

@@ -17,10 +17,10 @@ class MovieSearchLayoutViewModelImp @Inject constructor() : ViewModel(),
     override val layout: LiveData<List<ItemModel>>
         get() = _layout
 
-    override fun createLayout(data: List<MoviesDataModel.Movie>?) {
+    override fun createLayout(data: List<MoviesDataModel.Movie>) {
         val rows: MutableList<ItemModel> = mutableListOf()
 
-        if(!data.isNullOrEmpty()) {
+        if (data.isNotEmpty()) {
             rows.addAll(
                 data.map {
                     MoviesUIModel.MovieItem(it)
@@ -28,7 +28,7 @@ class MovieSearchLayoutViewModelImp @Inject constructor() : ViewModel(),
             )
         } else {
             rows.add(
-                MoviesUIModel.EmptyList()
+                MoviesUIModel.ErrorItem(textMessage = "Teste")
             )
         }
 

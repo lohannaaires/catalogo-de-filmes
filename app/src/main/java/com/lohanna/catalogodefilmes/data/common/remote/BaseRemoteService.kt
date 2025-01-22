@@ -9,7 +9,7 @@ abstract class BaseRemoteService(baseUrl: String) {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun<T> create(service: Class<T>): T {
+    fun <T> create(service: Class<T>): T {
         return retrofit.create(service)
     }
 }
