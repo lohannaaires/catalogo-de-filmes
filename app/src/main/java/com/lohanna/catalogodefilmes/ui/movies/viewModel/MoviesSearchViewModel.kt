@@ -11,4 +11,5 @@ interface MoviesSearchViewModel {
 
     fun getMoviesByTerm(term: String)
     fun getMovieDetails(imdb: String)
+    fun cleanLoadedData()
 }

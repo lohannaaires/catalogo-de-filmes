@@ -2,6 +2,7 @@ package com.lohanna.catalogodefilmes.ui.movies.view.search
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.annotation.ColorRes
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -10,6 +11,7 @@ import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -56,7 +58,7 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
 
     private fun setUI() {
         getData()
-        setMaterialToolbarTitle()
+        setMaterialToolbar()
         setAdapter()
         setObserver()
         searchView()
@@ -67,7 +69,14 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         dataViewModel.getMoviesByTerm("Duna")
     }
 
-    private fun setMaterialToolbarTitle() {
+    private fun setMaterialToolbar() {
+        binding.toolbar.setBackgroundColor(getColor(R.color.colorPrimary))
+        binding.toolbar.setTitleTextColor(getColor(R.color.colorToolbarText))
+        binding.toolbar.setNavigationIconTint(getColor(R.color.colorDetail))
+        updateMaterialToolbarTitle()
+    }
+
+    private fun updateMaterialToolbarTitle() {
         binding.toolbar.title =
             getString(R.string.toolbar_title, dataViewModel.movies.value?.size ?: 0)
     }
@@ -91,8 +100,8 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
 
         dataViewModel.movies.observe(viewLifecycleOwner) {
             Loading.dismiss()
+            updateMaterialToolbarTitle()
             it?.let {
-                setMaterialToolbarTitle()
                 layoutViewModel.createLayout(it)
             }
         }
@@ -105,6 +114,7 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         dataViewModel.error.observe(viewLifecycleOwner) {
             Loading.dismiss()
             it?.let {
+                dataViewModel.cleanLoadedData()
                 adapter.update(
                     listOf(MoviesUIModel.ErrorItem(textMessage = it))
                 )
@@ -115,17 +125,31 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
     private fun searchView() {
         val searchView =
             binding.toolbar.menu.findItem(R.id.item_search).actionView as SearchView
+
+        searchView.queryHint = "Type a term to search"
+
+        val searchTextView =
+            searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+
+        searchTextView.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.colorToolbarText
+            )
+        )
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // A fazer
+                query?.let { dataViewModel.getMoviesByTerm(it) }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // A fazer
+                if ((newText?.length ?: 0) >= 1) {
+                    newText?.let { dataViewModel.getMoviesByTerm(it) }
+                }
                 return true
             }
-
         })
     }
 
@@ -198,8 +222,12 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         dialog.show()
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            .setTextColor(ContextCompat.getColor(requireContext(), R.color.yellow_primary))
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.yellowPrimary))
 
         lastDialog = dialog
+    }
+
+    private fun getColor(@ColorRes color: Int): Int {
+        return ContextCompat.getColor(requireContext(), color)
     }
 }

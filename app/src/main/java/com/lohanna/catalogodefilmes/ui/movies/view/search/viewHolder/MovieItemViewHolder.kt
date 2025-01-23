@@ -15,7 +15,7 @@ class MovieItemViewHolder(
         item.movie.apply {
             binding.tvMovieTitle.text =
                 binding.root.resources.getString(R.string.movie_title, this.title, this.year)
-            binding.tvMovieType.text = this.type
+            binding.tvMovieType.text = this.type.replaceFirstChar { it.titlecase() }
         }
 
         when (item.movie.type) {

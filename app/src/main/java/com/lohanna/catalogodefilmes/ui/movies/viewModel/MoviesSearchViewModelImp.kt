@@ -67,4 +67,9 @@ class MoviesSearchViewModelImp @Inject constructor(private val repository: Movie
             }
         }
     }
+
+    override fun cleanLoadedData() {
+        _movies.postValue(null)
+        _movieDetails.postValue(null)
+    }
 }

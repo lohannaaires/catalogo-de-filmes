@@ -11,6 +11,6 @@
         android:layout_gravity="center"
         android:background="@android:color/transparent"
         android:indeterminate="true"
-        android:indeterminateTint="@color/yellow_primary" />
+        android:indeterminateTint="@color/yellowPrimary" />
 
 </FrameLayout>
