@@ -24,7 +24,7 @@ import com.lohanna.catalogodefilmes.databinding.AlertDialogMovieDetailsBinding
 import com.lohanna.catalogodefilmes.databinding.FragmentSearchBaseLayoutBinding
 import com.lohanna.catalogodefilmes.ui.base.adapter.ItemClickListener
 import com.lohanna.catalogodefilmes.ui.base.model.ItemModel
-import com.lohanna.catalogodefilmes.ui.common.util.ViewUtils.removeLinksUnderline
+import com.lohanna.catalogodefilmes.ui.util.ViewUtils.removeLinksUnderline
 import com.lohanna.catalogodefilmes.ui.component.Loading
 import com.lohanna.catalogodefilmes.ui.movies.view.search.uiModel.MoviesUIModel
 import com.lohanna.catalogodefilmes.ui.movies.viewModel.MoviesSearchViewModel
@@ -35,9 +35,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MoviesSearchFragment : Fragment(), ItemClickListener {
     private lateinit var binding: FragmentSearchBaseLayoutBinding
-    private lateinit var adapter: MovieSearchAdapter
+    private lateinit var adapter: MoviesSearchAdapter
 
-    private val layoutViewModel: MovieSearchLayoutViewModel by viewModels<MovieSearchLayoutViewModelImp>()
+    private val layoutViewModel: MoviesSearchLayoutViewModel by viewModels<MoviesSearchLayoutViewModelImp>()
     private val dataViewModel: MoviesSearchViewModel by viewModels<MoviesSearchViewModelImp>()
 
     private var lastDialog: AlertDialog? = null
@@ -60,8 +60,8 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         getData()
         setMaterialToolbar()
         setAdapter()
-        setObserver()
-        searchView()
+        setObservers()
+        setSearchView()
     }
 
     private fun getData() {
@@ -82,7 +82,7 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
     }
 
     private fun setAdapter() {
-        adapter = MovieSearchAdapter()
+        adapter = MoviesSearchAdapter()
         adapter.listener = this
         binding.rvContainer.layoutManager =
             LinearLayoutManager(
@@ -93,7 +93,7 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         binding.rvContainer.adapter = adapter
     }
 
-    private fun setObserver() {
+    private fun setObservers() {
         layoutViewModel.layout.observe(viewLifecycleOwner) {
             adapter.update(it)
         }
@@ -122,21 +122,22 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         }
     }
 
-    private fun searchView() {
+    override fun onItemClicked(item: ItemModel) {
+        when (item) {
+            is MoviesUIModel.MovieItem -> {
+                Loading.show(requireContext())
+                dataViewModel.getMovieDetails(item.movie.imdbID)
+            }
+        }
+    }
+
+    private fun setSearchView() {
         val searchView =
             binding.toolbar.menu.findItem(R.id.item_search).actionView as SearchView
 
-        searchView.queryHint = "Type a term to search"
+        searchView.queryHint = getString(R.string.search_view_hint_text)
 
-        val searchTextView =
-            searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-
-        searchTextView.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.colorToolbarText
-            )
-        )
+        searchView.setTextColor(R.color.colorToolbarText)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -153,26 +154,37 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
         })
     }
 
-    override fun onItemClicked(item: ItemModel) {
-        when (item) {
-            is MoviesUIModel.MovieItem -> {
-                Loading.show(requireContext())
-                dataViewModel.getMovieDetails(item.movie.imdbID)
-            }
-        }
+    private fun SearchView.setTextColor(@ColorRes color: Int) {
+        val searchTextView =
+            this.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+
+        searchTextView.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                color
+            )
+        )
     }
 
     private fun showDetails() {
+        lastDialog?.dismiss()
+
+        val dialog = getBuilder().create()
+        dialog.show()
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.yellowPrimary))
+
+        lastDialog = dialog
+    }
+
+    private fun getBuilder(): AlertDialog.Builder {
         val data = dataViewModel.movieDetails.value
 
         val builder = AlertDialog.Builder(requireContext())
 
         val dialogBinding = AlertDialogMovieDetailsBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
-
-        val imdbRating = SpannableStringBuilder()
-            .bold { append("IMDB Rating: ") }
-            .append(data?.imdbRating ?: "")
 
         val imageUrl = SpannableString(getString(R.string.view_image))
         imageUrl.setSpan(
@@ -203,6 +215,10 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
                 data?.country ?: ""
             )
 
+            val imdbRating = SpannableStringBuilder()
+                .bold { append(getString(R.string.imdb_rating_label) + " ") }
+                .append(data?.imdbRating ?: "")
+
             tvIMDBRating.text = imdbRating
 
             data?.poster?.let {
@@ -213,18 +229,10 @@ class MoviesSearchFragment : Fragment(), ItemClickListener {
             }
         }
 
-        builder.setPositiveButton("OK") { _, _ -> }
+        builder.setPositiveButton(getString(R.string.btn_ok)) { _, _ -> }
         builder.setCancelable(false)
 
-        lastDialog?.dismiss()
-
-        val dialog = builder.create()
-        dialog.show()
-
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            .setTextColor(ContextCompat.getColor(requireContext(), R.color.yellowPrimary))
-
-        lastDialog = dialog
+        return builder
     }
 
     private fun getColor(@ColorRes color: Int): Int {

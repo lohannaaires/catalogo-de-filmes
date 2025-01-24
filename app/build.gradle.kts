@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.lohanna.catalogodefilmes"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.lohanna.catalogodefilmes"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -72,13 +72,7 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:.0.0-alpha.7")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.7")
-
-    // Paging
-    implementation(libs.androidx.paging.runtime)
+    implementation(libs.converter.gson)
 
     // Picasso
     implementation(libs.picasso)

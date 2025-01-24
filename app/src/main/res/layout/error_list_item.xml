@@ -8,22 +8,22 @@
 
     <ImageView
         android:id="@+id/ivIconNotFound"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="@dimen/dimen_64dp"
+        android:layout_height="@dimen/dimen_64dp"
+        android:layout_marginTop="@dimen/dimen_100dp"
+        tools:src="@drawable/ic_search_not_found"
+        android:importantForAccessibility="no"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_search_not_found"
-        android:importantForAccessibility="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvMessage"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dimen_0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"
+        android:layout_margin="@dimen/dimen_32dp"
         android:textAlignment="center"
-        tools:text="An error ocurred."
+        tools:text="@string/generic_error_message"
         android:textColor="@color/colorDetail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

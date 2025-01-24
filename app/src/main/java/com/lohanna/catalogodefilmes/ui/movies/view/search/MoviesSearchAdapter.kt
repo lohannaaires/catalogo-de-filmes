@@ -11,7 +11,7 @@ import com.lohanna.catalogodefilmes.ui.movies.view.search.uiModel.MoviesUIModel
 import com.lohanna.catalogodefilmes.ui.movies.view.search.viewHolder.ErrorItemViewHolder
 import com.lohanna.catalogodefilmes.ui.movies.view.search.viewHolder.MovieItemViewHolder
 
-class MovieSearchAdapter : BaseAdapter() {
+class MoviesSearchAdapter : BaseAdapter() {
     override fun getItemViewType(position: Int): Int {
         return when (list[position]) {
             is MoviesUIModel.MovieItem -> R.layout.movie_item

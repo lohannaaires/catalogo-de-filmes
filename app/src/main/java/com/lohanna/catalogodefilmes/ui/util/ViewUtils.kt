@@ -1,4 +1,4 @@
-package com.lohanna.catalogodefilmes.ui.common.util
+package com.lohanna.catalogodefilmes.ui.util
 
 import android.text.SpannableString
 import android.text.TextPaint

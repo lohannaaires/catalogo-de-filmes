@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Movie Catalog</string>
     <string name="toolbar_title">Videos/ - %1$d files</string>
+    <string name="search_view_hint_text">Type a term to search</string>
+    <string name="generic_error_message">An error occurred.</string>
+    <string name="imdb_rating_label">IMDB Rating: </string>
     <string name="movie_title">%1$s. (%2$s)</string>
     <string name="search">Search</string>
     <string name="genre_and_country">%1$s. %2$s.</string>
     <string name="view_image">View Image</string>
+    <string name="btn_ok">OK</string>
 </resources>
